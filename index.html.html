@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulario Agresión por Animal - Compacto 24H</title>
+<style>
+  :root {
+    --bg-main: #e2e8f0;
+    --panel-bg: #ffffff;
+    --border-grid: #000000;
+    --header-yellow: #ffff00;
+    --primary-ready: #16a34a;
+    --primary-ready-hover: #15803d;
+    --disabled-bg: #94a3b8;
+    --disabled-border: #64748b;
+    --secondary-bg: #e2e8f0;
+    --secondary-hover: #cbd5e1;
+    --text-dark: #000000;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+  }
+
+  body {
+    padding: 6px;
+  }
+
+  /* Contenedor principal de 3 columnas para encajar en 100vh sin scroll */
+  .app-container {
+    display: flex;
+    gap: 8px;
+    height: calc(100vh - 12px);
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: stretch;
+  }
+
+  /* Estilos base de panel */
+  .panel {
+    background: var(--panel-bg);
+    border: 1.5px solid #64748b;
+    border-radius: 4px;
+    padding: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-form {
+    flex: 0 0 auto;
+    justify-content: space-between;
+  }
+
+  /* Estructura de tabla tipo Excel */
+  .excel-table {
+    border-collapse: collapse;
+    width: max-content;
+    border: 1.5px solid var(--border-grid);
+  }
+
+  .excel-table td {
+    border: 1px solid var(--border-grid);
+    padding: 1px 4px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #000000;
+    vertical-align: middle;
+    height: 22px;
+  }
+
+  /* Columnas ajustadas apretadamente al texto del label */
+  .excel-table td.label-cell {
+    background-color: #ffffff;
+    white-space: nowrap;
+    text-transform: uppercase;
+    width: 1%;
+    padding-right: 6px;
+  }
+
+  .excel-table td.value-cell {
+    background-color: #ffffff;
+    width: 220px;
+    padding: 0;
+  }
+
+  /* Fila amarilla de sección */
+  .excel-table tr.header-row td {
+    background-color: var(--header-yellow) !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 11px;
+    height: 22px;
+  }
+
+  /* Inputs y selects dentro de la celda */
+  .excel-input, .excel-select {
+    width: 100%;
+    height: 100%;
+    min-height: 20px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: #000000;
+    padding: 0 3px;
+    box-sizing: border-box;
+  }
+
+  .excel-input::placeholder {
+    color: #94a3b8;
+    font-weight: normal;
+    font-style: italic;
+    opacity: 0.85;
+  }
+
+  .excel-select {
+    cursor: pointer;
+  }
+
+  .excel-input:focus, .excel-select:focus {
+    background-color: #e0f2fe;
+    outline: 2px solid #0284c7;
+    outline-offset: -2px;
+  }
+
+  .excel-input.incomplete, .excel-select.incomplete {
+    background-color: #fff1f2;
+  }
+
+  /* Columna de Acción Central */
+  .panel-center-actions {
+    flex: 0 0 135px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0 2px;
+  }
+
+  .btn-copy-main {
+    width: 100%;
+    height: 120px;
+    background: var(--disabled-bg);
+    color: #ffffff;
+    border: 2px solid var(--disabled-border);
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: bold;
+    cursor: not-allowed;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    line-height: 1.25;
+    padding: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-copy-main.ready {
+    background: var(--primary-ready);
+    border-color: #14532d;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(22, 163, 74, 0.4);
+  }
+
+  .btn-copy-main.ready:hover {
+    background: var(--primary-ready-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(22, 163, 74, 0.5);
+  }
+
+  .btn-copy-main.ready:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .btn-copy-main svg {
+    width: 28px;
+    height: 28px;
+    fill: currentColor;
+  }
+
+  /* Panel de Previsualización derecha */
+  .panel-preview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  textarea {
+    flex: 1;
+    width: 100%;
+    resize: none;
+    border: 1px solid #94a3b8;
+    border-radius: 4px;
+    padding: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11.5px;
+    line-height: 1.35;
+    color: #000;
+    background-color: #f8fafc;
+    white-space: pre-wrap;
+    outline: none;
+  }
+
+  textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+
+  .actions-bottom {
+    display: flex;
+    gap: 6px;
+    margin-top: 5px;
+  }
+
+  button.btn-sub {
+    border: 1px solid #94a3b8;
+    border-radius: 3px;
+    padding: 4px 8px;
+    font-size: 10.5px;
+    font-weight: bold;
+    cursor: pointer;
+    background: var(--secondary-bg);
+    color: var(--text-dark);
+    transition: background-color 0.15s ease;
+  }
+
+  button.btn-sub:hover {
+    background: var(--secondary-hover);
+  }
+
+  .status-toast {
+    font-size: 10.5px;
+    min-height: 28px;
+    color: #dc2626;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .status-toast.success {
+    color: #15803d;
+  }
+
+  @media (max-width: 900px) {
+    .app-container {
+      flex-direction: column;
+      height: auto;
+      overflow-y: auto;
+    }
+    html, body {
+      overflow: auto;
+      height: auto;
+    }
+    .panel-form, .excel-table, .excel-table td.value-cell {
+      width: 100%;
+    }
+    .panel-center-actions {
+      flex: 0 0 auto;
+      width: 100%;
+    }
+    .btn-copy-main {
+      height: 55px;
+      flex-direction: row;
+    }
+    textarea {
+      min-height: 250px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- COLUMNA 1: FORMULARIO DILIGENCIAMIENTO TIPO EXCEL -->
+  <section class="panel panel-form">
+    <table class="excel-table">
+      <tbody>
+        <tr>
+          <td class="label-cell">¿QUIÉN?</td>
+          <td class="value-cell">
+            <select id="quien" class="excel-select" tabindex="1">
+              <option value=""></option>
+              <option>PACIENTE</option>
+              <option>FAMILIAR</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">REFIERE QUE EL DÍA</td>
+          <td class="value-cell">
+            <input id="fecha" type="date" value="" class="excel-input" tabindex="2">
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">APROXIMADAMENTE A LAS</td>
+          <td class="value-cell">
+            <!-- Forzado a formato 24 horas estricto mediante lang="en-GB" -->
+            <input id="hora" type="time" step="60" value="" class="excel-input" tabindex="3" lang="en-GB">
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">SUFRIÓ AGRESIÓN POR</td>
+          <td class="value-cell">
+            <input id="animal" value="" placeholder="Escriba la respuesta" class="excel-input" tabindex="4">
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">MORDEDURA UBICADA EN</td>
+          <td class="value-cell">
+            <input id="ubicacion" value="" placeholder="Escriba la respuesta" class="excel-input" tabindex="5">
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">ESQUEMA DE VACUNACIÓN ANTIRRÁBICA PREVIO:</td>
+          <td class="value-cell">
+            <select id="vacprevia" class="excel-select" tabindex="6">
+              <option value=""></option>
+              <option>COMPLETO</option>
+              <option>INCOMPLETO</option>
+              <option>NO REFIERE</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">LUGAR DEL EVENTO:</td>
+          <td class="value-cell">
+            <input id="lugar" value="" placeholder="Escriba la respuesta" class="excel-input" tabindex="7">
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">AGRESIÓN:</td>
+          <td class="value-cell">
+            <select id="agresion" class="excel-select" tabindex="8">
+              <option value=""></option>
+              <option>NO PROVOCADA</option>
+              <option>PROVOCADA</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">TIPO DE EXPOSICIÓN:</td>
+          <td class="value-cell">
+            <select id="exposicion" class="excel-select" tabindex="9">
+              <option value=""></option>
+              <option>MORDEDURA</option>
+              <option>ARAÑAZO</option>
+              <option>CONTACTO CON SALIVA</option>
+              <option>LAMEDURA EN MUCOSA O PIEL LESIONADA</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">ÁREA DEL CUERPO:</td>
+          <td class="value-cell">
+            <select id="area" class="excel-select" tabindex="10">
+              <option value=""></option>
+              <option>CUBIERTA</option>
+              <option>DESCUBIERTA</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">LESIÓN:</td>
+          <td class="value-cell">
+            <select id="lesion" class="excel-select" tabindex="11">
+              <option value=""></option>
+              <option>ÚNICA</option>
+              <option>MÚLTIPLE</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">PROFUNDIDAD:</td>
+          <td class="value-cell">
+            <select id="profundidad" class="excel-select" tabindex="12">
+              <option value=""></option>
+              <option>PROFUNDA</option>
+              <option>SUPERFICIAL</option>
+            </select>
+          </td>
+        </tr>
+        <!-- FILA SECCIÓN AMARILLA -->
+        <tr class="header-row">
+          <td colspan="2">CONDICIONES DEL ANIMAL:</td>
+        </tr>
+        <tr>
+          <td class="label-cell">ANIMAL:</td>
+          <td class="value-cell">
+            <select id="animalEstado" class="excel-select" tabindex="13">
+              <option value=""></option>
+              <option>CONOCIDO</option>
+              <option>DESCONOCIDO</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">ESTADO DE VACUNACIÓN DEL ANIMAL:</td>
+          <td class="value-cell">
+            <select id="vacAnimal" class="excel-select" tabindex="14">
+              <option value=""></option>
+              <option>VACUNADO</option>
+              <option>NO VACUNADO</option>
+              <option>DESCONOCIDO</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">ESTADO ACTUAL DEL ANIMAL:</td>
+          <td class="value-cell">
+            <select id="estadoActual" class="excel-select" tabindex="15">
+              <option value=""></option>
+              <option>VIVO</option>
+              <option>MUERTO</option>
+              <option>DESCONOCIDO</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">NOMBRE DEL PROPIETARIO DEL ANIMAL:</td>
+          <td class="value-cell">
+            <input id="propietario" value="" placeholder="Escriba la respuesta" class="excel-input" tabindex="16">
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">DIRECCIÓN DEL PROPIETARIO:</td>
+          <td class="value-cell">
+            <input id="direccion" value="" placeholder="Escriba la respuesta" class="excel-input" tabindex="17">
+          </td>
+        </tr>
+        <tr>
+          <td class="label-cell">NÚMERO DE CONTACTO DEL PROPIETARIO:</td>
+          <td class="value-cell">
+            <input id="contacto" value="" placeholder="Escriba la respuesta" class="excel-input" tabindex="18">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="actions-bottom">
+      <button class="btn-sub" type="button" id="limpiar">Limpiar campos</button>
+    </div>
+  </section>
+
+  <!-- COLUMNA 2: BOTÓN CENTRAL ACCESO RÁPIDO CON VALIDACIÓN -->
+  <section class="panel-center-actions">
+    <button class="btn-copy-main" type="button" id="copiar" disabled>
+      <svg viewBox="0 0 24 24">
+        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+      </svg>
+      <span id="btn-text">FALTAN DATOS POR DILIGENCIAR</span>
+    </button>
+    <div class="status-toast" id="estado" role="status" aria-live="polite">Diligencie todos los campos</div>
+  </section>
+
+  <!-- COLUMNA 3: PANEL DE TEXTO RESULTADO -->
+  <section class="panel panel-preview">
+    <textarea id="resultado" aria-label="Texto final generado" spellcheck="false" readonly></textarea>
+    <div class="actions-bottom">
+      <button class="btn-sub" type="button" id="seleccionar">Seleccionar todo</button>
+    </div>
+  </section>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const get = id => $(id).value.trim();
+
+  const fieldIds = [
+    "quien", "fecha", "hora", "animal", "ubicacion", "vacprevia",
+    "lugar", "agresion", "exposicion", "area", "lesion", "profundidad",
+    "animalEstado", "vacAnimal", "estadoActual", "propietario", "direccion", "contacto"
+  ];
+
+  function fechaTexto(value) {
+    if (!value) return "";
+    const [y, m, d] = value.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
+  // Formateo e interpretación de hora en formato estricto de 24 horas HH:mm
+  function formatoHora24(value) {
+    if (!value) return "";
+    const partes = value.split(":");
+    if (partes.length >= 2) {
+      let hh = parseInt(partes[0], 10);
+      let mm = parseInt(partes[1], 10);
+      if (isNaN(hh) || isNaN(mm)) return value;
+      return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+    }
+    return value;
+  }
+
+  // Concatenación exacta con ortografía y tildes corregidas
+  function construirTexto() {
+    const quien = get("quien"), fecha = fechaTexto(get("fecha")), hora = formatoHora24(get("hora"));
+    const animal = get("animal"), ubicacion = get("ubicacion"), vacprevia = get("vacprevia");
+    const lugar = get("lugar"), agresion = get("agresion"), exposicion = get("exposicion");
+    const area = get("area"), lesion = get("lesion"), profundidad = get("profundidad");
+    const animalEstado = get("animalEstado"), vacAnimal = get("vacAnimal"), estadoActual = get("estadoActual");
+    const propietario = get("propietario"), direccion = get("direccion"), contacto = get("contacto");
+
+    return quien + " REFIERE QUE EL DÍA " + fecha + " APROXIMADAMENTE A LAS " + hora +
+      " SUFRIÓ AGRESIÓN POR " + animal + ". MORDEDURA UBICADA EN " + ubicacion + "." +
+      "\n\nESQUEMA DE VACUNACIÓN ANTIRRÁBICA PREVIO: " + vacprevia +
+      "\nLUGAR DEL EVENTO: " + lugar +
+      "\nAGRESIÓN:  " + agresion +
+      "\nTIPO DE EXPOSICIÓN: " + exposicion +
+      "\nÁREA DEL CUERPO: " + area +
+      "\nLESIÓN: " + lesion +
+      "\nPROFUNDIDAD: " + profundidad +
+      "\n\nCONDICIONES DEL ANIMAL:\nANIMAL: " + animalEstado +
+      "\nESTADO DE VACUNACIÓN DEL ANIMAL: " + vacAnimal +
+      "\nESTADO ACTUAL DEL ANIMAL: " + estadoActual +
+      "\nNOMBRE DEL PROPIETARIO DEL ANIMAL: " + propietario +
+      "\nDIRECCIÓN DEL PROPIETARIO:  " + direccion +
+      "\nNÚMERO DE CONTACTO DEL PROPIETARIO: " + contacto;
+  }
+
+  function validarYActualizar() {
+    $("resultado").value = construirTexto();
+
+    let faltantes = 0;
+    fieldIds.forEach(id => {
+      const el = $(id);
+      if (!el.value.trim()) {
+        faltantes++;
+        el.classList.add("incomplete");
+      } else {
+        el.classList.remove("incomplete");
+      }
+    });
+
+    const btn = $("copiar");
+    const btnText = $("btn-text");
+    const estado = $("estado");
+
+    if (faltantes === 0) {
+      btn.disabled = false;
+      btn.classList.add("ready");
+      btnText.textContent = "COPIAR TEXTO FINAL";
+      estado.textContent = "✓ ¡Formulario completo! Listo para copiar.";
+      estado.className = "status-toast success";
+    } else {
+      btn.disabled = true;
+      btn.classList.remove("ready");
+      btnText.textContent = `FALTAN ${faltantes} DATO(S)`;
+      estado.textContent = `Faltan ${faltantes} campo(s) por diligenciar`;
+      estado.className = "status-toast";
+    }
+  }
+
+  // Apertura automática de desplegables con TAB mediante showPicker()
+  document.querySelectorAll("select").forEach(select => {
+    select.addEventListener("focus", () => {
+      if ('showPicker' in HTMLSelectElement.prototype) {
+        try {
+          select.showPicker();
+        } catch (e) {
+          // Ignorar restricciones del navegador si no se permite invocación directa
+        }
+      }
+    });
+  });
+
+  document.querySelectorAll("input, select").forEach(el => {
+    el.addEventListener("input", validarYActualizar);
+    el.addEventListener("change", validarYActualizar);
+  });
+
+  $("copiar").addEventListener("click", () => {
+    if ($("copiar").disabled) return;
+
+    $("resultado").focus();
+    $("resultado").select();
+    try {
+      document.execCommand('copy');
+      $("estado").textContent = "✓ ¡Texto copiado con éxito!";
+      $("estado").className = "status-toast success";
+    } catch (e) {
+      $("estado").textContent = "Seleccione y use Ctrl+C para copiar";
+    }
+  });
+
+  $("seleccionar").addEventListener("click", () => {
+    $("resultado").focus();
+    $("resultado").select();
+  });
+
+  $("limpiar").addEventListener("click", () => {
+    document.querySelectorAll("input").forEach(el => el.value = "");
+    document.querySelectorAll("select").forEach(el => el.selectedIndex = 0);
+    validarYActualizar();
+  });
+
+  // Validar campos vacíos inicialmente
+  validarYActualizar();
+</script>
+</body>
+</html>
